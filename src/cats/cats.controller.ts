@@ -1,3 +1,6 @@
+import { Cat } from './cats.schema';
+import { Request } from 'express';
+import { JwtAuthGuard } from './../auth/jwt/jwt.guard';
 import { LoginRequestDto } from './../auth/dto/login.request.dto';
 import { AuthService } from './../auth/auth.service';
 import { ReadOnlyCatDto } from './dto/cat.dto';
@@ -12,12 +15,15 @@ import {
   UseInterceptors,
   UseFilters,
   Body,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { SuccessInterceptor } from './../common/interceptors/success.interceptor';
 import { HttpExceptionFilter } from './../common/exceptions/http-exception.filter';
 import { CatRequestDto } from './dto/cats.request.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CurrentCat } from 'src/common/decorators/user.decorator';
 
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
@@ -29,9 +35,10 @@ export class CatsController {
   ) {}
 
   @ApiOperation({ summary: '현재 고양이 가져오기' })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getCurrentCat() {
-    return 'current cat';
+  getCurrentCat(@CurrentCat() cat: Cat) {
+    return cat.readOnlyData;
   }
 
   @ApiOperation({ summary: '고양이 하나 찾기' })
@@ -61,6 +68,8 @@ export class CatsController {
   logIn(@Body() data: LoginRequestDto) {
     return this.authService.jwtLogIn(data);
   }
+
+  //로그아웃은 프론트에서 JWT 지우면 완성
 
   @ApiOperation({ summary: '고양이 수정하기' })
   @Put(':id')
