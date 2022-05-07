@@ -10,7 +10,7 @@ import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true, cache: true }), //환경변수를 사용하기 위해, 모든 모듈에서 import, 캐시로 속도향상
     MongooseModule.forRoot(process.env.MONGODB_URI),
     CatsModule,
     AuthModule,
