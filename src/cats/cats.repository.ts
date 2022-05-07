@@ -10,6 +10,10 @@ import { Model } from 'mongoose';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findAll() {
+    return await this.catModel.find(); //조건이 없을시 모두
+  }
+
   async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
     const cat = await this.catModel.findById(catId).select('-password');
     return cat;
