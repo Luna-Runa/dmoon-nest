@@ -42,7 +42,10 @@ export class Cat extends Document {
   @IsNotEmpty()
   password: string;
 
-  @Prop()
+  @Prop({
+    default:
+      'https://raw.githubusercontent.com/amamov/teaching-nestjs-a-to-z/main/images/1.jpeg',
+  })
   @IsString()
   imgUrl: string;
 
