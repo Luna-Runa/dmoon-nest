@@ -1,3 +1,4 @@
+import { CommentsSchema, Comments } from './../comments/comments.schema';
 import { AuthModule } from './../auth/auth.module';
 import { Cat, CatSchema } from './cats.schema';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -10,7 +11,10 @@ import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     MulterModule.register({ dest: './upload' }),
-    MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }]),
+    MongooseModule.forFeature([
+      { name: Cat.name, schema: CatSchema },
+      { name: Comments.name, schema: CommentsSchema },
+    ]),
     forwardRef(() => AuthModule), //양쪽에서 순환참조를 하기 때문
   ],
   controllers: [CatsController],

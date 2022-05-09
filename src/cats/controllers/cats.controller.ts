@@ -3,7 +3,7 @@ import { Cat } from '../cats.schema';
 import { JwtAuthGuard } from '../../auth/jwt/jwt.guard';
 import { LoginRequestDto } from '../../auth/dto/login.request.dto';
 import { AuthService } from '../../auth/auth.service';
-import { ReadOnlyCatDto } from '../dto/cat.dto';
+import { ReadOnlyCatDto } from '../dtos/cat.dto';
 import {
   Controller,
   Get,
@@ -21,7 +21,7 @@ import {
 import { CatsService } from '../services/cats.service';
 import { SuccessInterceptor } from '../../common/interceptors/success.interceptor';
 import { HttpExceptionFilter } from '../../common/exceptions/http-exception.filter';
-import { CatRequestDto } from '../dto/cats.request.dto';
+import { CatRequestDto } from '../dtos/cats.request.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CurrentCat } from 'src/common/decorators/user.decorator';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -42,12 +42,30 @@ export class CatsController {
     return cat.readOnlyData;
   }
 
-  @ApiOperation({ summary: '고양이 하나 찾기' })
+  @ApiOperation({ summary: '모든 고양이 가져오기' })
+  @Get('all')
+  getAllCat() {
+    return this.catsService.getAllCat();
+  }
+
+  /* @ApiOperation({ summary: '고양이 하나 찾기' })
   @Get(':id')
   getOneCat(@Param('id', ParseIntPipe) param) {
     console.log(param);
     return 'one cat';
   }
+
+  @ApiOperation({ summary: '고양이 수정하기' })
+  @Put(':id')
+  updateCat() {
+    return 'update cat';
+  }
+
+  @ApiOperation({ summary: '고양이 보내주기' })
+  @Delete(':id')
+  deleteCat() {
+    return 'delete cat';
+  } */
 
   @ApiResponse({
     status: 500,
@@ -72,18 +90,6 @@ export class CatsController {
 
   //로그아웃은 프론트에서 JWT 지우면 완성
 
-  @ApiOperation({ summary: '고양이 수정하기' })
-  @Put(':id')
-  updateCat() {
-    return 'update cat';
-  }
-
-  @ApiOperation({ summary: '고양이 보내주기' })
-  @Delete(':id')
-  deleteCat() {
-    return 'delete cat';
-  }
-
   @ApiOperation({ summary: '고양이 이미지 업로드' })
   @UseInterceptors(FilesInterceptor('image', 10, multerOptions('cats')))
   @UseGuards(JwtAuthGuard)
@@ -94,13 +100,7 @@ export class CatsController {
   ) {
     console.log(files);
 
-    //return { image: `http://localhost:4000/media/cats/${files[0].filename}` };
+    //return { image: `http://localhost:PORT/media/cats/${files[0].filename}` };
     return this.catsService.uploadImg(cat, files);
-  }
-
-  @ApiOperation({ summary: '모든 고양이 가져오기' })
-  @Get('all')
-  getAllCat() {
-    return this.catsService.getAllCat();
   }
 }

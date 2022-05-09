@@ -6,14 +6,16 @@ import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { AuthModule } from './auth/auth.module';
+import { CommentsModule } from './comments/comments.module';
 import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, cache: true }), //환경변수를 사용하기 위해, 모든 모듈에서 import, 캐시로 속도향상
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    MongooseModule.forRoot(process.env.MONGODB_URI, { useCreateIndex: true }),
     CatsModule,
     AuthModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
